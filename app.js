@@ -13,8 +13,6 @@ const connectDB=require('./config/database');
 const errorHandlerMiddleware=require('./middleware/error_handler');
 const authenticationMiddleware = require('./middleware/authentication')
 //
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
 
 const app = express();
@@ -34,8 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandlerMiddleware);
 
 //Routers
-app.use('/', indexRouter);  
-app.use('/users', usersRouter);
 app.use('/api/auth',require('./routes/api/auth'));
 app.use('/api/session',require('./routes/api/session'));
 app.use('/api/task',require('./routes/api/task'));

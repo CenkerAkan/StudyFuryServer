@@ -22,14 +22,14 @@ function authentication(req, res, next) {
         req.user = user.toObject({ getters: true })// to get full name and id fields (virtual kısımlar)
       }else{
         req.user = {}
-        ü
+        
       }
       return next()
 
     })
 
   }else{
-    ü
+    
     req.user = {}
     return next()
   }
