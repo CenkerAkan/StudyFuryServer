@@ -19,9 +19,7 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 const PORT=3500;
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
+
 
 connectDB();
 app.use(credentials);
@@ -39,9 +37,11 @@ app.use(errorHandlerMiddleware);
 app.use('/', indexRouter);  
 app.use('/users', usersRouter);
 app.use('/api/auth',require('./routes/api/auth'));
+app.use('/api/session',require('./routes/api/session'));
+app.use('/api/task',require('./routes/api/task'));
+app.use('/api/blog',require('./routes/api/blog'));
+app.use('/api/comment',require('./routes/api/comment'));
 
-
-// catch 404 and forward to error handler
 
 app.all('*', (req, res) => {
   res.status(404)

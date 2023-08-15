@@ -58,9 +58,24 @@ const UserSchema=Schema(
             required:false,
             default:0
         },
+        commentCount:{
+            type:Number,
+            required:false,
+            default:0
+        },
         isAdmin:{
             type:Boolean,
             default:false
+        },
+        currentSessionId:{
+            type:String,
+            default:"",
+            required:false
+        },
+        totalMinsWorked:{
+            type:Number,
+            default:0,
+            required:false
         },
         refresh_token: String,
     },
