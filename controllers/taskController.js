@@ -5,12 +5,12 @@ const Task=require("../models/Task");
 async function createTask(req,res){
     const user = await User.findOne({_id: req.user.id}).exec();
     if(!user) return res.status(401).json({message:"you are not authorized"});
-    const {header,description,deadline}=req.body;
-
-    if(!header||!description||!deadline)return res.status(422).json({message: "improper input"});
+    const {header,deadline}=req.body;
+    console.log("header: "+header+" deadline: "+deadline);
+    if(!header||!deadline)return res.status(422).json({message: "improper input"});
     try {
         const userId=user.id;
-        const createdTask=await Task.create({userId,header,description,deadline,isCompletedInTime:false});
+        const createdTask=await Task.create({userId,header,deadline,isCompletedInTime:false});
         console.log(createdTask)
         user.totalTasks++;
         await user.save();
@@ -42,19 +42,17 @@ async function completeTask(req,res){
 }
 
 async function updateTask(req,res){
-    const {taskId,header,description,deadline}=req.body;
+    const {taskId,header,deadline}=req.body;
     console.log(taskId);
     console.log(header);
-    console.log(description);
     console.log(deadline);
-    if(!taskId||!header||!description||!deadline)return res.status(422).json({message: "improper input"});
+    if(!taskId||!header||!deadline)return res.status(422).json({message: "improper input"});
     const updatedTask = await Task.findOne({_id: taskId}).exec();
     if(!updatedTask) return res.status(404).json({message: "task not found"});
     if(!(updatedTask.userId===req.user.id))return res.status(403).json({message:"userId and task is not matched :D"});
 
     try {
         updatedTask.header=header;
-        updateTask.description=description;
         updatedTask.deadline=deadline;
         await updatedTask.save();
         return res.sendStatus(200);
@@ -81,4 +79,36 @@ async function getCurrentTasks(req,res){
     }
 }
 
-module.exports={createTask,completeTask,updateTask,getCurrentTasks};
+async function getTasks(req,res){
+    const id=req.user.id;
+    const user = await User.findOne({_id: id}).exec();
+    if(!user) return res.status(401).json({message:"you are not authorized"});
+    try {
+        const taskContent = await Task.find().sort({ createdAt: -1 });
+        res.status(200).json(taskContent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching task content.' });
+    }
+}
+
+async function discardTask(req,res){
+    const user = await User.findOne({_id: req.user.id}).exec();
+    if(!user) return res.status(401).json({message:"you are not authorized"});
+    const {taskId}=req.body;
+    if(!taskId)return res.status(422).json({message: "improper input"});
+    const discardedTask = await Task.findOne({_id: taskId}).exec();
+    if(!discardedTask) return res.status(404).json({message: "task not found"});
+
+    try {
+        user.totalTasks--;
+        await user.save();
+        await Task.findByIdAndDelete(taskId);
+        return res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message: "Task Discard Command Failed"});
+    }
+}
+
+module.exports={createTask,completeTask,updateTask,getCurrentTasks,getTasks,discardTask};

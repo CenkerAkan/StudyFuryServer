@@ -1,6 +1,6 @@
 const User=require('../models/User');
 const Blog=require('../models/Blog');
-
+const Comment=require('../models/Comment');
 
 async function createBlog(req,res){
     const id=req.user.id;
@@ -79,6 +79,7 @@ async function viewBlog(req,res){
     const user = await User.findOne({_id: id}).exec();
     if(!user) return res.status(401).json({message:"you are not authorized"});
     const {blog_id}=req.body;
+    console.log(blog_id);
     if(!blog_id)return res.status(422).json({message: "wrong blog id input"});
     try {
         const currentBlog=await Blog.findOne({_id:blog_id});
@@ -90,4 +91,30 @@ async function viewBlog(req,res){
     
 }
 
-module.exports={createBlog,updateBlog,findBlog,viewBlog};
+async function getBlogs(req,res){
+    const id=req.user.id;
+    const user = await User.findOne({_id: id}).exec();
+    if(!user) return res.status(401).json({message:"you are not authorized"});
+    try {
+        const blogContent = await Blog.find().sort({ createdAt: -1 });
+        res.status(200).json(blogContent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching blog content.' });
+    }
+}
+
+async function getUserBlogs(req,res){
+    const id=req.user.id;
+    const user = await User.findOne({_id: id}).exec();
+    if(!user) return res.status(401).json({message:"you are not authorized"});
+    try {
+        const blogContent = await Blog.find({userId:id}).sort({ createdAt: -1 });
+        res.status(200).json(blogContent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching blog content.' });
+    }
+}
+
+module.exports={createBlog,updateBlog,findBlog,viewBlog,getBlogs,getUserBlogs};

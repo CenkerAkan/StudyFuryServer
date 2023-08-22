@@ -8,6 +8,8 @@ router.post('/completeTask', taskController.completeTask);
 
 router.post('/updateTask', taskController.updateTask);
 
-router.post('/getCurrentTasks', taskController.getCurrentTasks);
+router.get('/getCurrentTasks', taskController.getCurrentTasks);
+
+router.post('/discardTask', taskController.discardTask);
 
 module.exports=router;

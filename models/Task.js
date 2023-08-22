@@ -13,10 +13,10 @@ const TaskSchema=Schema(
             type:String,
             required:true,
         },
-        description:{
+        /*description:{
             type:String,
             required:true,
-        },
+        },*/
         deadline:{
             type: Date,
             required:true

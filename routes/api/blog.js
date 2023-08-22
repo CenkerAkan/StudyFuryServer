@@ -11,5 +11,8 @@ router.post('/findBlog', blogControllers.findBlog);
 
 router.post('/viewBlog', blogControllers.viewBlog);
 
+router.get('/getBlogs', blogControllers.getBlogs);
+
+router.get('/getUserBlogs', blogControllers.getBlogs);
 
 module.exports=router;

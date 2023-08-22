@@ -3,9 +3,9 @@ const jwt= require('jsonwebtoken');
 const bcrypt=require('bcrypt');
 
 async function register(req, res){
-    const {username, email, first_name, last_name, password, password_confirm} = req.body
+    const {username, email, password, password_confirm} = req.body
 
-    if(!username || !email || !password || !password_confirm || !first_name || !last_name) {
+    if(!username || !email || !password || !password_confirm) {
         return res.status(422).json({'message': 'Invalid fields'})
     }
 
@@ -18,9 +18,9 @@ async function register(req, res){
     try {
         hashedPassword = await bcrypt.hash(password, 10)
 
-        await User.create({email, username, password: hashedPassword, first_name, last_name})
+        await User.create({email, username, password: hashedPassword});
 
-        return res.sendStatus(201)
+        return res.status(201).json({message:"user registered succesfully"})
     } catch (error) {
         return res.status(400).json({message: "Could not register"})
     }
@@ -33,6 +33,7 @@ async function login(req, res){
 
     const user = await User.findOne({email}).exec()
 
+    console.log(user);
     if(!user) return res.status(401).json({message: "Email or password is incorrect"})
 
     const match = await bcrypt.compare(password, user.password)
@@ -121,4 +122,14 @@ async function user(req, res){
     return res.status(200).json(user)
 }
 
-module.exports = {register, login, logout, refresh, user}
+async function getUserById(req, res){
+    const {userId} = req.body
+    if(!userId) return res.status(422).json({'message': 'Invalid fields'})
+    const user = await User.findOne({_id:userId}).exec()
+
+if(!user) return res.status(401).json({message: "Email or password is incorrect"})
+    console.log(user);
+
+    return res.status(200).json(user)
+}
+module.exports = {register, login, logout, refresh, user,getUserById}
