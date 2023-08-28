@@ -12,6 +12,7 @@ function authentication(req, res, next) {
     
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {//token'ı elde ettik şimdi verify edeceğiz.
       if(err){
+        console.log(err);
         req.user = {}
         return next()
       }
@@ -29,7 +30,8 @@ function authentication(req, res, next) {
     })
 
   }else{
-    
+    console.log(authHeader);
+    console.log(req.headers.Authorization);
     req.user = {}
     return next()
   }

@@ -1,6 +1,8 @@
 const User=require('../models/User');
 const jwt= require('jsonwebtoken');
 const bcrypt=require('bcrypt');
+const Session=require('../models/Session');
+const Task=require('../models/Task');
 
 async function register(req, res){
     const {username, email, password, password_confirm} = req.body
@@ -127,9 +129,52 @@ async function getUserById(req, res){
     if(!userId) return res.status(422).json({'message': 'Invalid fields'})
     const user = await User.findOne({_id:userId}).exec()
 
-if(!user) return res.status(401).json({message: "Email or password is incorrect"})
+    if(!user) return res.status(401).json({message: "Email or password is incorrect"})
     console.log(user);
-
     return res.status(200).json(user)
 }
-module.exports = {register, login, logout, refresh, user,getUserById}
+
+async function getSpesificFocusData(req,res){
+    const id=req.user.id;
+    const user = await User.findOne({_id: id}).exec();
+    if(!user) return res.status(401).json({message:"you are not authorized"});
+    const {day}=req.body;
+    if(!(day>0))return res.status(422).json({message: "wrong blog id input"});
+    try {
+        let dataDate=new Date();
+        dataDate.setDate(dataDate.getDate()-day);
+
+        const focusData = await Session.find({
+            userId:id,
+            start: { $gte: dataDate} 
+        }).sort({ createdAt: -1 });
+
+        console.log("dataDate: "+ dataDate);
+        console.log("focusData: "+focusData);
+
+        let totalDuration = 0;
+        let sessionCount = focusData.length;
+
+        focusData.forEach(session => {
+            totalDuration += session.duration; 
+        });
+
+        const taskData = await Task.find({
+            userId:id,
+            completeDate: { $gte: dataDate} 
+        }).sort({ createdAt: -1 });
+
+        let taskCount=taskData.length;
+
+        res.status(200).json({
+            sessionCount: sessionCount,
+            totalDuration: totalDuration,
+            taskCount:taskCount,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "An error occurred while data get" });
+    }
+}
+
+module.exports = {register, login, logout, refresh, user,getUserById,getSpesificFocusData}

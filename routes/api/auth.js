@@ -16,4 +16,6 @@ router.get('/user',authMiddleware ,authControllers.user);
 
 router.post('/getUserById',authMiddleware ,authControllers.getUserById);
 
+router.post('/getSpesificFocusData',authMiddleware ,authControllers.getSpesificFocusData);
+
 module.exports=router;

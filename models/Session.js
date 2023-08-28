@@ -11,7 +11,7 @@ const SessionSchema=Schema(
         duration:{
             type:Number,
             required:true,
-            min:25,
+            min:0,
             max:180
         },
         start:{

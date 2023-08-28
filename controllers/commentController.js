@@ -44,10 +44,15 @@ async function updateComment(req,res){
             const blogId=currentComment.postId;
             const currentBlog=await Blog.findOne({_id:blogId});
             if(!currentBlog)return res.status(404).json({message:"post not found"});
+            const authorId=currentComment.userId;
+            const author = await User.findOne({_id:authorId}).exec();
+            author.commentCount--;
+            await author.save();
+
+
             currentBlog.commentNumber--;
             await currentBlog.save();
-            user.commentCount--;
-            await user.save();
+            
             await Comment.findByIdAndDelete(comment_id);
             return res.status(200).json({message:"comment delete succesful"});
 

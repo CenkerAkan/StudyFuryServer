@@ -6,10 +6,11 @@ async function startSession(req,res){
     const id=req.user.id;
     const user = await User.findOne({_id: id}).exec();
     if(!user) return res.status(401).json({message:"you are not authorized"}); 
-
     const {duration}=req.body;
+    console.log("duration: "+duration);
+    console.log(typeof(duration));
 
-    if(!duration||duration<25) return res.status(422).json({message: "wrong duration input"});
+    if(!duration||duration<0) return res.status(422).json({message: "wrong duration input"});
 
     try {
         const userId=req.user.id;
@@ -79,6 +80,8 @@ async function endSessionFail(req,res){
         user.totalMinsWorked+=timePassed;
         user.currentSessionId="";
         await user.save();
+        session.duration=timePassed;
+        await session.save();
         return res.sendStatus(200);
     } catch (error) {
         console.log(error);

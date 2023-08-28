@@ -4,8 +4,8 @@ const sessionController=require('../../controllers/sessionController');
 
 router.post('/startSession', sessionController.startSession);
 
-router.post('/endSessionSuccess', sessionController.endSessionSuccess);
+router.get('/endSessionSuccess', sessionController.endSessionSuccess);
 
-router.post('/endSessionFail', sessionController.endSessionFail);
+router.get('/endSessionFail', sessionController.endSessionFail);
 
 module.exports=router;

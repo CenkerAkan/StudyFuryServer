@@ -33,6 +33,8 @@ async function completeTask(req,res){
         user.completedTasks++;
         await user.save();
         completedTask.isCompletedInTime=true;
+        const currentDate=new Date();
+        completedTask.completeDate=currentDate;
         await completedTask.save();
         return res.sendStatus(200);
     } catch (error) {

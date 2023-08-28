@@ -8,7 +8,6 @@ async function createBlog(req,res){
     if(!user) return res.status(401).json({message:"you are not authorized"}); 
     const {header,description}=req.body;
     if(!header||!description)return res.status(422).json({message: "wrong duration input"});
-
     try {
         const userId=id;
         await Blog.create({userId,header,description});
@@ -46,9 +45,11 @@ async function updateBlog(req,res){
             //----------
             return res.status(200).json({message:"update succesful"});
         }else{
+            const authorId=currentBlog.userId;
+            const author = await User.findOne({_id:authorId}).exec();
             await Blog.findByIdAndDelete(blogId);
-            user.blogCount--;
-            await user.save();
+            author.blogCount--;
+            await author.save();
             return res.status(200).json({ message: "Blog deleted successfully" });
         }
     } catch (error) {
@@ -88,7 +89,6 @@ async function viewBlog(req,res){
         console.error(error);
         return res.status(500).json({ message: "An error occurred while blog view" });
     }
-    
 }
 
 async function getBlogs(req,res){

@@ -25,6 +25,11 @@ const TaskSchema=Schema(
             type:Boolean,
             required:false,
             default:false
+        },
+        completeDate:{
+            type:Date,
+            required:false,
+            default: () => new Date('2023-01-01')
         }
     },
     {
